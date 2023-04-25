@@ -1,0 +1,21 @@
+{
+
+  "manifest_version": 2,
+  "name": "Discogs Digger",
+  "version": "1.0",
+
+  "description": "Helps with digging for music on discogs.",
+
+  "icons": {
+    "96": "icons/dd96.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.discogs.com/*"],
+      "js": ["digger.js"]
+    }
+  ]
+
+}
+
