@@ -1,4 +1,5 @@
-// create the overlay element
+// DiscogsDigger
+// https://github.com/nx1/DiscogsDigger
 var overlay = document.createElement('div');
 var videoId = 'ahvcIxWhM6Y';
 
@@ -39,6 +40,35 @@ tracklistOverlay.innerHTML = '<ul><li>Song 1</li><li>Song 2</li><li>Song 3</li> 
 overlay.appendChild(tracklistOverlay);
 
 
+function playVideo(event) {
+  event.preventDefault();  // Prevents scrolling to top
+  var videoId2 = 'gpSz_Ipt5z8';
+
+  // get the iframe element
+  var player = document.getElementById('player');
+  // update the src attribute of the iframe with the new video ID
+  player.src = 'https://www.youtube.com/embed/' + videoId2;
+}
+
+
+function getTracklist(event) {
+  event.preventDefault();
+//  var url = event.target.href;
+  var url = 'https://www.discogs.com/release/154337-Phony-Orphants-vs-Antix-Saturday-Candy-Chicargo-Collins'
+  getTracklist(url).then(function(tracklist) {
+    var tracklistOverlay = document.getElementById('tracklist-overlay');
+    tracklistOverlay.innerHTML = '';
+    var ul = document.createElement('ul');
+    for (var i = 0; i < tracklist.length; i++) {
+      var li = document.createElement('li');
+      li.textContent = tracklist[i];
+      ul.appendChild(li);
+    }
+    tracklistOverlay.appendChild(ul);
+  });
+}
+
+
 // get all the title elements
 var titleElems = document.querySelectorAll('td.title');
 
@@ -56,17 +86,8 @@ for (var i = 0; i < titleElems.length; i++) {
     // set the href and text content of the anchor element
     anchor.href = '#';
     anchor.textContent = '[▶]';
-
-    // add click event listener to the anchor element
-    anchor.addEventListener('click', function(event) {
-      event.preventDefault();  // Prevents scrolling to top
-      var videoId2 = 'gpSz_Ipt5z8';
-
-      // get the iframe element
-      var player = document.getElementById('player');
-      // update the src attribute of the iframe with the new video ID
-      player.src = 'https://www.youtube.com/embed/' + videoId2;
-    });
+    anchor.addEventListener('click', playVideo);
+    anchor.addEventListener('click', getTracklist);
 
     // insert the new anchor element after the link
     links[j].parentNode.insertBefore(anchor, links[j].nextSibling);
@@ -82,16 +103,8 @@ for (var i = 0; i<nl.length;i++){
     anchor.textContent = '[▶]';
 
     // add click event listener to the anchor element
-    anchor.addEventListener('click', function(event) {
-      event.preventDefault();  // Prevents scrolling to top
-      var videoId2 = 'gpSz_Ipt5z8';
-
-      // get the iframe element
-      var player = document.getElementById('player');
-      // update the src attribute of the iframe with the new video ID
-      player.src = 'https://www.youtube.com/embed/' + videoId2;
-    });
-	nl[i].parentNode.insertBefore(anchor, nl[i].nextSibling);
+    anchor.addEventListener('click', playVideo);
+    nl[i].parentNode.insertBefore(anchor, nl[i].nextSibling);
 
 }
 
