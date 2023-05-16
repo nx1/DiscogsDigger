@@ -1,5 +1,15 @@
-import { apiKey } from './config.js';
-const releaseId = 155124; // Replace with the ID of the release you want to get details for
+const apiKey = "xGVjKnQznJbDOoNtOCdmSDLBeaWiehqigqeOSBdp"; 
+const releaseId = 155124; 
+
+
+function extractVideoId(link){
+  const url = new URL(link);
+  const searchParams = new URLSearchParams(url.search);
+  return searchParams.get('v');
+}
+
+const trackTitles = [];
+const videoURLs = [];
 
 const headers = {
   "Authorization": `Discogs token=${apiKey}`
@@ -8,10 +18,21 @@ const headers = {
 fetch(`https://api.discogs.com/releases/${releaseId}`, { headers })
   .then(response => response.json())
   .then(data => {
-    // Handle the data returned from the API here
     console.log(data);
+    //console.log(data['videos']);
+    //console.log(data['tracklist']);
+    data['videos'].forEach(video => {
+      videoURLs.push(extractVideoId(video.uri));
+    });
+    data['tracklist'].forEach(track => {
+      trackTitles.push(track.title);
+      //console.log(track.title);
+    });
+  console.log(trackTitles);
+  console.log(videoURLs);
   })
   .catch(error => {
-    // Handle any errors here
     console.error(error);
   });
+
+

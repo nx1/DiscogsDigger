@@ -1,8 +1,12 @@
 // DiscogsDigger
 // https://github.com/nx1/DiscogsDigger
-var overlay = document.createElement('div');
-var videoId = 'ahvcIxWhM6Y';
+// Your API Key goes here, generate one at:
+// https://www.discogs.com/settings/developers
+const apiKey = "xGVjKnQznJbDOoNtOCdmSDLBeaWiehqigqeOSBdp"; 
 
+
+// Video Overlay
+var overlay = document.createElement('div');
 overlay.style.position = 'fixed';
 overlay.style.bottom = '20px';
 overlay.style.right = '20px';
@@ -14,17 +18,14 @@ overlay.style.borderRadius = '2px';
 overlay.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
 overlay.style.zIndex = '9999';
 
+var videoId = 'ahvcIxWhM6Y';
 
-// add the YouTube video embed to the overlay element
 overlay.innerHTML = '<iframe id="player" width="100%" height="100%" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
 
 document.body.appendChild(overlay);
 
-
-// create the second overlay element
+// Tracklist Overlay
 var tracklistOverlay = document.createElement('div');
-
-// set the position of the second overlay element to be absolute
 tracklistOverlay.style.position = 'absolute';
 tracklistOverlay.style.backgroundColor = '#fff';
 tracklistOverlay.style.borderRadius = '2px';
@@ -40,73 +41,36 @@ tracklistOverlay.innerHTML = '<ul><li>Song 1</li><li>Song 2</li><li>Song 3</li> 
 overlay.appendChild(tracklistOverlay);
 
 
-function playVideo(event) {
+// Extract the releaseID from url
+function extractReleaseId(url) {
+  const pattern = /\/(\d+)-/; 
+  const matches = url.match(pattern);
+  return matches ? matches[1] : null;
+}
+
+// Extract the videoID from url
+function extractVideoId(link){
+  const url = new URL(link);
+  const searchParams = new URLSearchParams(url.search);
+  return searchParams.get('v');
+}
+
+
+function playVideo(event, videoId) {
   event.preventDefault();  // Prevents scrolling to top
-  var videoId2 = 'gpSz_Ipt5z8';
-
-  // get the iframe element
   var player = document.getElementById('player');
-  // update the src attribute of the iframe with the new video ID
-  player.src = 'https://www.youtube.com/embed/' + videoId2;
+  player.src = 'https://www.youtube.com/embed/' + videoId;
 }
 
-
-function getTracklist(event) {
-  event.preventDefault();
-//  var url = event.target.href;
-  var url = 'https://www.discogs.com/release/154337-Phony-Orphants-vs-Antix-Saturday-Candy-Chicargo-Collins'
-  getTracklist(url).then(function(tracklist) {
-    var tracklistOverlay = document.getElementById('tracklist-overlay');
-    tracklistOverlay.innerHTML = '';
-    var ul = document.createElement('ul');
-    for (var i = 0; i < tracklist.length; i++) {
-      var li = document.createElement('li');
-      li.textContent = tracklist[i];
-      ul.appendChild(li);
-    }
-    tracklistOverlay.appendChild(ul);
+var foundLinks = document.querySelectorAll('td.title a, a.search_result_title');
+for (var i = 0; i < foundLinks.length; i++) {
+  var anchor = document.createElement('a');
+  var videoId = 'gpSz_Ipt5z8';
+  anchor.href = '#';
+  anchor.textContent = '[▶]';
+  anchor.addEventListener('click', function(event) {
+     playVideo(event, videoId);
+     //getTracklist(event);
   });
+  foundLinks[i].parentNode.insertBefore(anchor, foundLinks[i].nextSibling);
 }
-
-
-// get all the title elements
-var titleElems = document.querySelectorAll('td.title');
-
-// loop through each title element
-for (var i = 0; i < titleElems.length; i++) {
-  // get all the links inside the title element
-  var links = titleElems[i].querySelectorAll('a');
-
-  // loop through each link
-  for (var j = 0; j < links.length; j++) {
-
-    // create a new anchor element
-    var anchor = document.createElement('a');
-
-    // set the href and text content of the anchor element
-    anchor.href = '#';
-    anchor.textContent = '[▶]';
-    anchor.addEventListener('click', playVideo);
-    anchor.addEventListener('click', getTracklist);
-
-    // insert the new anchor element after the link
-    links[j].parentNode.insertBefore(anchor, links[j].nextSibling);
-  }
-}
-
-
-// Do same for titles in search results
-nl = document.querySelectorAll('a.search_result_title') // Node List
-for (var i = 0; i<nl.length;i++){
-	var anchor = document.createElement('a');
-	anchor.href = '#';
-    anchor.textContent = '[▶]';
-
-    // add click event listener to the anchor element
-    anchor.addEventListener('click', playVideo);
-    nl[i].parentNode.insertBefore(anchor, nl[i].nextSibling);
-
-}
-
-
-
